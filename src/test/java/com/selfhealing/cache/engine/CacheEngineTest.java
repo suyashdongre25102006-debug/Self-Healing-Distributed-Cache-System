@@ -71,4 +71,34 @@ class CacheEngineTest {
 
         assertEquals(2, engine.size());
     }
+
+    @Test
+    void shouldTrackHitsAndMisses() {
+
+        CacheEngine engine = new CacheEngine(10000);
+
+        engine.put("user1", "Suyash", 0);
+
+        engine.get("user1");
+        engine.get("unknown");
+
+        CacheStats stats = engine.getStats();
+
+        assertEquals(1, stats.getHits());
+        assertEquals(1, stats.getMisses());
+        assertEquals(2, stats.getTotalRequests());
+        assertEquals(0.5, stats.getHitRatio());
+    }
+
+    @Test
+    void shouldTrackEvictions() {
+
+        CacheEngine engine = new CacheEngine(2);
+
+        engine.put("A", "Apple", 0);
+        engine.put("B", "Banana", 0);
+        engine.put("C", "Cherry", 0);
+
+        assertEquals(1, engine.getStats().getEvictions());
+    }
 }

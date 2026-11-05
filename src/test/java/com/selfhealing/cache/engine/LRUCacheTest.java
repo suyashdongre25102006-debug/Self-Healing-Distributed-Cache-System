@@ -12,8 +12,9 @@ class LRUCacheTest {
 
     @BeforeEach
     void setUp() {
-        // Har test se pehle fresh cache
-        cache = new LRUCache(3);
+
+        // Fresh cache before every test
+        cache = new LRUCache(3, new CacheStats());
     }
 
     // Test 1: Insert and retrieve
@@ -77,7 +78,7 @@ class LRUCacheTest {
         // A becomes recently used
         cache.get("A");
 
-        // Cache full, B should be evicted
+        // B should be evicted
         cache.put("D", new CacheEntry("D", "Dates", 0));
 
         assertNull(cache.get("B"));
@@ -93,7 +94,6 @@ class LRUCacheTest {
 
         cache.put("A", new CacheEntry("A", "Apple", 100));
 
-        // Wait for TTL to expire
         Thread.sleep(200);
 
         CacheEntry result = cache.get("A");

@@ -2,6 +2,7 @@
 package com.selfhealing.cache.controller;
 
 import com.selfhealing.cache.engine.CacheEngine;
+import com.selfhealing.cache.engine.CacheStats;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +15,11 @@ public class CacheController {
 
     private final CacheEngine cacheEngine;
 
-    // Constructor injection
     public CacheController(CacheEngine cacheEngine) {
         this.cacheEngine = cacheEngine;
     }
 
-    // PUT: Store data
+    // Store data
     @PutMapping("/{key}")
     public ResponseEntity<Map<String, Object>> put(
             @PathVariable String key,
@@ -39,7 +39,7 @@ public class CacheController {
         );
     }
 
-    // GET: Retrieve data
+    // Retrieve data
     @GetMapping("/{key}")
     public ResponseEntity<Map<String, Object>> get(
             @PathVariable String key) {
@@ -58,7 +58,7 @@ public class CacheController {
         );
     }
 
-    // DELETE: Remove particular key
+    // Delete particular key
     @DeleteMapping("/{key}")
     public ResponseEntity<Map<String, Object>> delete(
             @PathVariable String key) {
@@ -77,24 +77,33 @@ public class CacheController {
         );
     }
 
-    // DELETE: Clear entire cache
+    // Clear entire cache
     @DeleteMapping
     public ResponseEntity<Map<String, String>> clear() {
 
         cacheEngine.clear();
 
         return ResponseEntity.ok(
-                Map.of("message", "Cache cleared successfully")
+                Map.of(
+                        "message", "Cache cleared successfully"
+                )
         );
     }
 
-    // GET: Cache statistics
+    // Cache statistics
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> stats() {
 
+        CacheStats stats = cacheEngine.getStats();
+
         return ResponseEntity.ok(
                 Map.of(
-                        "totalEntries", cacheEngine.size()
+                        "totalEntries", cacheEngine.size(),
+                        "totalRequests", stats.getTotalRequests(),
+                        "hits", stats.getHits(),
+                        "misses", stats.getMisses(),
+                        "hitRatio", stats.getHitRatio(),
+                        "evictions", stats.getEvictions()
                 )
         );
     }

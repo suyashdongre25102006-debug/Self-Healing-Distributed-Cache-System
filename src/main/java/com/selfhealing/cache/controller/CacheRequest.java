@@ -9,6 +9,11 @@ public class CacheRequest {
     public CacheRequest() {
     }
 
+    public CacheRequest(Object value, long ttlMillis) {
+        this.value = value;
+        this.ttlMillis = ttlMillis;
+    }
+
     public Object getValue() {
         return value;
     }

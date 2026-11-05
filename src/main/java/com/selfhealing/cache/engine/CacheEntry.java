@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class CacheEntry {
+
     private volatile Object value;
     private volatile long expiryTime;
     private final String key;
@@ -26,6 +27,17 @@ public class CacheEntry {
     public boolean isExpired() {
         return expiryTime != 0 &&
                 System.currentTimeMillis() >= expiryTime;
+    }
+
+    public long getRemainingTTL() {
+        if (expiryTime == 0) {
+            return 0;
+        }
+
+        return Math.max(
+                0,
+                expiryTime - System.currentTimeMillis()
+        );
     }
 
     public void updateValue(Object value, long ttlMillis) {
